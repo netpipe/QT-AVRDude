@@ -91,21 +91,27 @@ private slots:
         args << "-Uflash:w:" + hexEdit->text() + ":i";
 
         QProcess *proc = new QProcess(this);
+
+        output->clear(); // Clear previous logs
+        output->append("Running: " + avrdudePath + " " + args.join(" "));
+
         connect(proc, &QProcess::readyReadStandardOutput, [this, proc]() {
-            output->append(proc->readAllStandardOutput());
+            output->append(QString::fromUtf8(proc->readAllStandardOutput()));
         });
+
         connect(proc, &QProcess::readyReadStandardError, [this, proc]() {
-            output->append(proc->readAllStandardError());
+            output->append(QString::fromUtf8(proc->readAllStandardError()));
         });
+
         connect(proc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
                 [this, proc](int exitCode, QProcess::ExitStatus status) {
-            output->append("\nProcess finished with exit code " + QString::number(exitCode));
+            output->append(QString("\nProcess exited with code %1").arg(exitCode));
             proc->deleteLater();
         });
 
-        output->append("Running: avrdude " + args.join(" "));
         proc->start(avrdudePath, args);
     }
+
 
     void updatePorts() {
         QStringList currentPorts;
