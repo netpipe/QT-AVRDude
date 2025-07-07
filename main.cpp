@@ -24,7 +24,7 @@ public:
         // Programmer
         layout->addWidget(new QLabel("Programmer:"), 0, 0);
         programmerBox = new QComboBox();
-        programmerBox->addItems({"usbasp", "arduino", "avrisp", "usbtiny"});
+        programmerBox->addItems({"arduino","usbasp",  "avrisp", "usbtiny"});
         layout->addWidget(programmerBox, 0, 1);
 
         // MCU
@@ -76,7 +76,7 @@ private slots:
     }
 
     void upload() {
-        QString avrdudePath = "avrdude";
+        QString avrdudePath = QApplication::applicationDirPath() + "/avrdude";
         QStringList args;
 
         args << "-c" + programmerBox->currentText();
